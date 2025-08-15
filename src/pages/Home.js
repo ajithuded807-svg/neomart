@@ -44,26 +44,27 @@ export default function Home() {
     <>
       {/* Hero Section */}
       <div
-        className="relative w-full flex items-center justify-center bg-cover bg-center"
+        className="relative w-full flex items-center justify-center bg-no-repeat bg-center bg-cover h-[65vh] sm:h-[75vh] md:h-[90vh]"
         style={{
           backgroundImage: "url('/neomarthomepagebg1.jpg')",
-          height: "90vh",
         }}
       >
+        {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center animate-float px-4">
-          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-350 to-purple-400">
+        {/* Center Content */}
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center px-4">
+          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-350 to-purple-400">
             Welcome to <span className="text-white">NeoMart</span>
           </h1>
 
-          <p className="mt-6 text-sm sm:text-base md:text-lg font-bold text-white">
+          <p className="mt-4 sm:mt-6 text-sm sm:text-base md:text-lg font-bold text-white">
             Smart shopping starts here: curated collections, secure checkout, endless delight.
           </p>
 
           <button
             onClick={handleStartShopping}
-            className="mt-8 px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 hover:scale-105 animate-pulse-slow"
+            className="mt-6 sm:mt-8 px-5 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 hover:scale-105"
           >
             Start Shopping
           </button>
@@ -77,7 +78,6 @@ export default function Home() {
             Shop by Category
           </h2>
 
-          {/* Responsive Grid */}
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
             {categories.map((cat, idx) => {
               if (cat.name === "Others") {
@@ -96,7 +96,7 @@ export default function Home() {
 
               return (
                 <Link
-                  to={`/category/${toSlug(cat.name)}`}
+                  to={/category/${toSlug(cat.name)}}
                   key={idx}
                   className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg border-2 border-black aspect-square flex flex-col"
                 >
