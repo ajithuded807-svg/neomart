@@ -1,36 +1,118 @@
 import React from "react";
-import "./Home.css";
+import { useNavigate, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
-  return (
-    <div className="home">
-      {/* Welcome Section */}
-      <section className="welcome-section">
-        <div className="welcome-content">
-          <h1>Welcome to NeoMart</h1>
-          <p>Your one-stop shop for all your needs!</p>
-          <button className="shop-now-btn">Shop Now</button>
-        </div>
-      </section>
+  const navigate = useNavigate();
+  const { isLoggedIn } = useAuth();
 
-      {/* Example More Content */}
-      <section className="features-section">
-        <h2>Why Choose NeoMart?</h2>
-        <div className="features">
-          <div className="feature-card">
-            <h3>Wide Variety</h3>
-            <p>Thousands of products to choose from.</p>
-          </div>
-          <div className="feature-card">
-            <h3>Best Prices</h3>
-            <p>Affordable rates for quality products.</p>
-          </div>
-          <div className="feature-card">
-            <h3>Fast Delivery</h3>
-            <p>Quick and reliable shipping to your doorstep.</p>
+  const handleStartShopping = () => {
+    navigate(isLoggedIn ? "/products" : "/login");
+  };
+
+  const toSlug = (str = "") =>
+    str
+      .toLowerCase()
+      .trim()
+      .replace(/['’`]/g, "")
+      .replace(/&/g, " and ")
+      .replace(/[^a-z0-9]+/g, "-")
+      .replace(/^-+|-+$/g, "");
+
+  const categories = [
+    { name: "Men's Wearing", image: "/mens.jpeg" },
+    { name: "Women's Wearing", image: "/womens.jpg" },
+    { name: "Electronics", image: "/electronics.webp" },
+    { name: "Home Appliances", image: "/homeappl.webp" },
+    { name: "Books & Stationery", image: "/books.webp" },
+    { name: "Sports & Outdoors", image: "/sports.webp" },
+    { name: "Toys & Games", image: "/toys.webp" },
+    { name: "Beauty & Personal Care", image: "/makeup.webp" },
+    { name: "Groceries", image: "/groceries.webp" },
+    { name: "Gadgets & Gizmos", image: "/gadgets.webp" },
+    { name: "Home & Decor", image: "/home-decor.jpg" },
+    { name: "Footwear", image: "/footwear.webp" },
+    { name: "Jewellery", image: "/jwellary.webp" },
+    { name: "Kitchen Essentials", image: "/kitchen.jpg" },
+    { name: "Travel & Luggage", image: "/travel.webp" },
+    { name: "Pet Supplies", image: "/pets.webp" },
+    { name: "Automotive", image: "/automotive.webp" },
+    { name: "Others", image: null },
+  ];
+
+  return (
+    <>
+      {/* Hero Section */}
+      <div
+        className="relative min-h-screen w-full flex items-center justify-center bg-cover bg-center bg-no-repeat"
+        style={{ backgroundImage: "url('/neomarthomepagebg1.jpg')" }}
+      >
+        <div className="absolute inset-0 bg-black bg-opacity-40"></div>
+
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center animate-float px-4">
+          <h1 className="text-4xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-350 to-purple-400">
+            Welcome to <span className="text-white">NeoMart</span>
+          </h1>
+
+          <p className="mt-6 text-sm md:text-lg font-bold text-white">
+            Smart shopping starts here: curated collections, secure checkout, endless delight.
+          </p>
+
+          <button
+            onClick={handleStartShopping}
+            className="mt-8 px-6 py-3 md:px-8 md:py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 hover:scale-105 animate-pulse-slow"
+          >
+            Start Shopping
+          </button>
+        </div>
+      </div>
+
+      {/* Categories Section */}
+      <div className="py-12 px-6 bg-gray-100 flex justify-center">
+        <div className="bg-gray-200 shadow-lg border border-black rounded-lg p-6 w-full max-w-6xl">
+          <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center border-b-2 border-black pb-2">
+            Shop by Category
+          </h2>
+
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {categories.map((cat, idx) => {
+              if (cat.name === "Others") {
+                return (
+                  <Link
+                    to="/products"
+                    key={idx}
+                    className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg border-2 border-black aspect-square flex items-center justify-center"
+                  >
+                    <button className="px-4 py-2 bg-gray-300 font-semibold text-gray-800 rounded-md hover:shadow-md transition">
+                      {cat.name}
+                    </button>
+                  </Link>
+                );
+              }
+
+              return (
+                <Link
+                  to={/category/${toSlug(cat.name)}}
+                  key={idx}
+                  className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg border-2 border-black aspect-square flex flex-col"
+                >
+                  <div className="flex-1 overflow-hidden">
+                    <img
+                      src={cat.image}
+                      alt={cat.name}
+                      loading="lazy"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <button className="p-2 bg-gray-300 font-semibold text-gray-800 text-center text-sm truncate hover:shadow-md transition">
+                    {cat.name}
+                  </button>
+                </Link>
+              );
+            })}
           </div>
         </div>
-      </section>
-    </div>
+      </div>
+    </>
   );
 }
