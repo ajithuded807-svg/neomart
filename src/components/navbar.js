@@ -6,10 +6,35 @@ import { MagnifyingGlassIcon } from "@heroicons/react/24/outline";
 export default function Navbar() {
   const { isLoggedIn, logout } = useAuth();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [scrolled, setScrolled] = useState(false);
   const dropdownRef = useRef();
   const location = useLocation();
 
   const isHomePage = location.pathname === "/";
+  const lastScrollY = useRef(0);
+
+  // Hide/Show navbar on scroll + detect transparency
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentScrollY = window.scrollY;
+
+      // Toggle visibility based on scroll direction
+      if (currentScrollY > lastScrollY.current && currentScrollY > 60) {
+        setShowNavbar(false);
+      } else {
+        setShowNavbar(true);
+      }
+
+      // Toggle transparency
+      setScrolled(currentScrollY > 0);
+
+      lastScrollY.current = currentScrollY;
+    };
+
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -23,7 +48,11 @@ export default function Navbar() {
   }, []);
 
   return (
-    <nav className="w-full bg-gray-100 h-20 flex items-center shadow-lg fixed top-0 left-0 z-50 px-6">
+    <nav
+      className={`w-full h-20 flex items-center fixed top-0 left-0 z-50 px-6 shadow-lg backdrop-blur-md transition-all duration-300 ${
+        showNavbar ? "translate-y-0" : "-translate-y-full"
+      } ${scrolled ? "bg-gray-100/80" : "bg-gray-100"}`}
+    >
       {/* Logo */}
       <Link
         to="/"
@@ -35,9 +64,7 @@ export default function Navbar() {
 
       {/* Center Search Bar */}
       <div className="flex-grow flex justify-center px-4">
-        <div
-          className="flex items-center bg-gray-200 border border-black rounded-full overflow-hidden w-full max-w-lg shadow-md transform transition-transform duration-200 hover:scale-105"
-        >
+        <div className="flex items-center bg-gray-200 border border-black rounded-full overflow-hidden w-full max-w-lg shadow-md transform transition-transform duration-200 hover:scale-105">
           <input
             type="text"
             placeholder="Search products..."
@@ -51,7 +78,6 @@ export default function Navbar() {
 
       {/* Right section */}
       <div className="flex items-center gap-4 relative">
-        {/* Show Login on home page, Home button on others */}
         {isHomePage ? (
           !isLoggedIn && (
             <Link
@@ -102,7 +128,6 @@ export default function Navbar() {
               >
                 About
               </Link>
-              {/* Only show Logout if logged in */}
               {isLoggedIn && (
                 <button
                   onClick={() => {
