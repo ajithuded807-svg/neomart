@@ -1,7 +1,7 @@
 import React from "react";
 import "./About.css";
-import Particles from "react-tsparticles";
-import { loadSlim } from "tsparticles-slim";
+import Particles from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
 
 export default function About() {
   const particlesInit = async (engine) => {
@@ -91,4 +91,5 @@ export default function About() {
       </div>
     </div>
   );
+
 }
