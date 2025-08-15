@@ -1,18 +1,94 @@
 import React from "react";
+import "./About.css";
+import Particles from "react-tsparticles";
+import { loadSlim } from "tsparticles-slim";
 
 export default function About() {
+  const particlesInit = async (engine) => {
+    await loadSlim(engine);
+  };
+
   return (
-    <div className="min-h-screen p-8 bg-gradient-to-r from-purple-500 via-pink-500 to-red-400 text-white flex flex-col items-center justify-center">
-      <h1 className="text-5xl md:text-6xl font-extrabold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-yellow-300 via-red-400 to-pink-500">
-        About Neomart
-      </h1>
-      <p className="text-lg md:text-2xl text-white/90 max-w-3xl text-center mb-6">
-        Neomart is your ultimate destination for trendy products that keep you ahead of the curve.
-        Shop easily, securely, and enjoy the latest gadgets and fashion items all in one place!
-      </p>
-      <p className="text-lg md:text-xl text-white/80 max-w-2xl text-center">
-        Our mission is to make online shopping simple, fast, and fun for everyone. Join our community and discover the products that fit your lifestyle.
-      </p>
+    <div className="about-page">
+      {/* Background Particles */}
+      <Particles
+        id="tsparticles"
+        init={particlesInit}
+        options={{
+          background: { color: "transparent" },
+          fpsLimit: 60,
+          interactivity: {
+            events: { onClick: { enable: true, mode: "push" }, resize: true },
+          },
+          particles: {
+            color: { value: "#ffddaa" },
+            links: { color: "#ff9900", distance: 150, enable: true },
+            move: { enable: true, speed: 2 },
+            size: { value: { min: 1, max: 3 } },
+          },
+        }}
+      />
+
+      {/* Title */}
+      <h2 className="about-title">About Developer</h2>
+
+      {/* Profile Card */}
+      <div className="profile-card">
+        <div className="profile-header">
+          <div className="profile-photo">
+            <img
+              src="/ajit.jpg"
+              alt="Developer"
+              className="photo-img"
+            />
+          </div>
+          <h3 className="dev-name">Ajit Huded</h3>
+        </div>
+
+        {/* Long Description */}
+        <div className="dev-description">
+          <p className="fade-in delay-1">
+            Hi, I’m <strong>Ajit Huded</strong>, a 2nd-year engineering student at 
+            Jain College of Engineering and Research, Udyambhag, Belagavi. While I’m still 
+            studying, my curiosity for technology constantly pushes me to explore new tools, 
+            frameworks, and ideas outside the syllabus. For me, learning isn’t just about 
+            passing exams — it’s about building things that make people say “Wow.”
+          </p>
+
+          <p className="fade-in delay-2">
+            My journey into development began with nothing more than excitement to create 
+            something unique. One day, I thought — “What if I could actually build something 
+            real and useful?” That’s when I started experimenting with AI-powered tools. 
+            They gave me the ability to bring my creative visions to life faster, and every 
+            little project made me more confident that I could make something bigger.  
+            I wasn’t just coding — I was creating.
+          </p>
+
+          <p className="fade-in delay-3">
+            Over time, I realized that this isn’t just a hobby for me. It’s a passion.  
+            I enjoy combining clean code with visually appealing designs that feel modern, 
+            smooth, and intuitive. Whether it’s front-end interfaces or back-end logic, 
+            I want my work to have both brains and beauty. My dream is to start my own 
+            company — not just to run a business, but to lead a team that builds meaningful, 
+            professional projects that have a real impact.
+          </p>
+
+          <p className="fade-in delay-4">
+            Outside of coding, I’m always brainstorming new ideas, exploring the latest 
+            trends in technology, and finding inspiration from design, art, and innovation. 
+            I believe in lifelong learning and never settling for “good enough.” The 
+            satisfaction I get when someone uses and appreciates my work is unmatched, and 
+            it motivates me to aim higher with every project I take on.
+          </p>
+
+          <p className="fade-in delay-5">
+            This portfolio and everything inside it is a reflection of my creativity, 
+            excitement, and commitment to growth. I’m still at the start of my journey, 
+            but I see a future where my ideas don’t just stay in my mind — they change 
+            the way people interact with technology. And this is only the beginning.
+          </p>
+        </div>
+      </div>
     </div>
   );
 }
