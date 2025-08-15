@@ -37,34 +37,33 @@ export default function Home() {
     { name: "Travel & Luggage", image: "/travel.webp" },
     { name: "Pet Supplies", image: "/pets.webp" },
     { name: "Automotive", image: "/automotive.webp" },
-    { name: "Others", image: null }, // No image
+    { name: "Others", image: null },
   ];
 
   return (
     <>
       {/* Hero Section */}
       <div
-        className="relative min-h-screen w-full flex items-center justify-center bg-cover bg-center"
+        className="relative w-full flex items-center justify-center bg-cover bg-center"
         style={{
           backgroundImage: "url('/neomarthomepagebg1.jpg')",
           height: "90vh",
-          width: "100%",
         }}
       >
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center animate-float">
-          <h1 className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-350 to-purple-400">
+        <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center animate-float px-4">
+          <h1 className="text-4xl sm:text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-350 to-purple-400">
             Welcome to <span className="text-white">NeoMart</span>
           </h1>
 
-          <p className="mt-8 text-base md:text-lg font-bold text-white">
+          <p className="mt-6 text-sm sm:text-base md:text-lg font-bold text-white">
             Smart shopping starts here: curated collections, secure checkout, endless delight.
           </p>
 
           <button
             onClick={handleStartShopping}
-            className="mt-10 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 hover:scale-105 animate-pulse-slow"
+            className="mt-8 px-6 py-3 sm:px-8 sm:py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 hover:scale-105 animate-pulse-slow"
           >
             Start Shopping
           </button>
@@ -72,23 +71,23 @@ export default function Home() {
       </div>
 
       {/* Categories Section */}
-      <div className="py-12 px-6 bg-gray-100 flex justify-center">
-        <div className="bg-gray-200 shadow-lg border border-black rounded-lg p-6 w-full max-w-6xl">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center border-b-2 border-black pb-2">
+      <div className="py-10 px-4 sm:px-6 bg-gray-100 flex justify-center">
+        <div className="bg-gray-200 shadow-lg border border-black rounded-lg p-4 sm:p-6 w-full max-w-6xl">
+          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-4 text-center border-b-2 border-black pb-2">
             Shop by Category
           </h2>
 
-          <div className="grid grid-cols-4 gap-4">
+          {/* Responsive Grid */}
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3 sm:gap-4">
             {categories.map((cat, idx) => {
               if (cat.name === "Others") {
-                // Special case for Others card
                 return (
                   <Link
                     to="/products"
                     key={idx}
                     className="bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg border-2 border-black aspect-square flex items-center justify-center"
                   >
-                    <button className="px-4 py-2 bg-gray-300 font-semibold text-gray-800 rounded-md hover:shadow-md transition">
+                    <button className="px-3 py-2 sm:px-4 sm:py-2 bg-gray-300 font-semibold text-gray-800 rounded-md hover:shadow-md transition text-sm sm:text-base">
                       {cat.name}
                     </button>
                   </Link>
@@ -109,7 +108,7 @@ export default function Home() {
                       className="w-full h-full object-cover"
                     />
                   </div>
-                  <button className="p-2 bg-gray-300 font-semibold text-gray-800 text-center text-sm truncate hover:shadow-md transition">
+                  <button className="p-2 bg-gray-300 font-semibold text-gray-800 text-center text-xs sm:text-sm truncate hover:shadow-md transition">
                     {cat.name}
                   </button>
                 </Link>
