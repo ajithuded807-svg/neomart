@@ -1,11 +1,12 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Home() {
   const navigate = useNavigate();
   const { isLoggedIn } = useAuth();
-  const [categoriesVisible, setCategoriesVisible] = useState(false);
+  const [visibleItems, setVisibleItems] = useState([]);
+  const refs = useRef([]);
 
   const handleStartShopping = () => {
     navigate(isLoggedIn ? "/products" : "/login");
@@ -42,10 +43,23 @@ export default function Home() {
   ];
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setCategoriesVisible(true);
-    }, 200);
-    return () => clearTimeout(timer);
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const index = Number(entry.target.dataset.index);
+          if (entry.isIntersecting) {
+            setVisibleItems((prev) => [...new Set([...prev, index])]);
+          } else {
+            setVisibleItems((prev) => prev.filter((i) => i !== index));
+          }
+        });
+      },
+      { threshold: 0.2 }
+    );
+
+    refs.current.forEach((ref) => ref && observer.observe(ref));
+
+    return () => observer.disconnect();
   }, []);
 
   return (
@@ -54,7 +68,7 @@ export default function Home() {
       <div
         className="relative min-h-screen w-full flex items-center justify-center bg-cover bg-center"
         style={{
-          backgroundImage: "url('/neomarthomepagebg1.jpg')",
+          backgroundImage: "url('/neomarthomepagebg1.avif')",
           height: "90vh",
           width: "100%",
         }}
@@ -62,7 +76,7 @@ export default function Home() {
         {/* Overlay */}
         <div className="absolute inset-0 bg-black bg-opacity-40"></div>
 
-        {/* About Developer (top-left corner) */}
+        {/* About Developer */}
         <Link
           to="/about"
           className="absolute top-4 left-4 flex items-center space-x-3 bg-white p-2 rounded-full hover:scale-105 transition shadow-md"
@@ -80,50 +94,61 @@ export default function Home() {
 
         {/* Floating Content */}
         <div className="relative z-10 w-full max-w-2xl flex flex-col items-center text-center animate-float">
-          <h1 className="text-5xl md:text-6xl font-extrabold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 via-indigo-350 to-purple-400">
-            Welcome to <span className="text-white">NeoMart</span>
+          <h1
+            className="text-5xl md:text-6xl font-extrabold px-8 py-4 rounded-3xl shadow-xl 
+                       bg-gradient-to-r from-black/60 via-gray-800/50 to-black/60 
+                       backdrop-blur-md border border-white/20"
+          >
+            <span className="text-white drop-shadow-md">Welcome to </span>
+            <span className="text-blue-500 drop-shadow-md">Neo</span>
+            <span className="text-green-500 drop-shadow-md">Mart</span>
           </h1>
 
-          <p className="mt-8 text-base md:text-lg font-bold text-white">
-            Smart shopping starts here: curated collections, secure checkout, endless delight.
+          <p className="mt-8 text-base md:text-lg font-bold text-white drop-shadow-md">
+            Smart shopping starts here: curated collections, secure checkout,
+            endless delight.
           </p>
 
           <button
             onClick={handleStartShopping}
-            className="mt-10 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 transition-all duration-300 hover:scale-105 animate-pulse-slow"
+            className="mt-10 px-8 py-4 bg-gradient-to-r from-blue-600 to-indigo-700 text-white font-bold 
+                       rounded-xl shadow-lg hover:from-blue-700 hover:to-indigo-800 
+                       transition-all duration-300 hover:scale-105 animate-pulse-slow backdrop-blur-sm"
           >
             Start Shopping
           </button>
         </div>
-
-        {/* Decorative blobs */}
-        <div className="absolute top-10 left-20 w-40 h-40 bg-pink-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob"></div>
-        <div className="absolute top-20 right-20 w-40 h-40 bg-yellow-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-2000"></div>
-        <div className="absolute bottom-20 left-1/2 w-40 h-40 bg-purple-300 rounded-full mix-blend-multiply filter blur-xl opacity-70 animate-blob animation-delay-4000"></div>
       </div>
 
       {/* Categories Section */}
       <div className="py-12 px-6 bg-gray-100 flex justify-center">
-        <div className="bg-gray-200 shadow-lg border border-black rounded-lg p-6 w-full max-w-6xl">
-          <h2 className="text-3xl font-bold text-gray-800 mb-4 text-center border-b-2 border-black pb-2">
+        <div className="bg-gradient-to-br from-purple-100 via-gray-100 to-indigo-100 shadow-xl border border-gray-300 rounded-3xl p-8 w-full max-w-6xl">
+          <h2 className="text-3xl font-extrabold text-gray-900 mb-6 text-center border-b-2 border-black/30 pb-3 bg-gradient-to-r from-purple-600 via-indigo-600 to-blue-600 bg-clip-text text-transparent drop-shadow-sm">
             Shop by Category
           </h2>
 
-          <div className="grid grid-cols-4 gap-4">
+          {/* Responsive grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {categories.map((cat, idx) => {
-              const delay = `${idx * 0.1}s`;
+              const isVisible = visibleItems.includes(idx);
 
               if (cat.name === "Others") {
                 return (
                   <Link
                     to="/products"
                     key={idx}
-                    className={`bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg border-2 border-black aspect-square flex items-center justify-center ${categoriesVisible ? "fade-up" : ""}`}
-                    style={{ animationDelay: delay }}
+                    ref={(el) => (refs.current[idx] = el)}
+                    data-index={idx}
+                    className={`rounded-2xl shadow-md border border-gray-400 aspect-square flex items-center justify-center bg-gradient-to-tr from-gray-200 via-gray-100 to-gray-300 transition-all duration-700 ease-out ${
+                      isVisible
+                        ? "opacity-100 translate-y-0 scale-100"
+                        : "opacity-0 translate-y-10 scale-90"
+                    }`}
+                    style={{ transitionDelay: `${idx * 120}ms` }}
                   >
-                    <button className="px-4 py-2 bg-gray-300 font-semibold text-gray-800 rounded-md hover:shadow-md transition">
+                    <span className="px-5 py-3 bg-gradient-to-r from-gray-300 to-gray-200 font-semibold text-gray-900 rounded-xl shadow-sm">
                       {cat.name}
-                    </button>
+                    </span>
                   </Link>
                 );
               }
@@ -132,20 +157,29 @@ export default function Home() {
                 <Link
                   to={`/category/${toSlug(cat.name)}`}
                   key={idx}
-                  className={`bg-white rounded-xl shadow-md overflow-hidden transition-transform duration-300 hover:scale-105 hover:shadow-lg border-2 border-black aspect-square flex flex-col ${categoriesVisible ? "fade-up" : ""}`}
-                  style={{ animationDelay: delay }}
+                  ref={(el) => (refs.current[idx] = el)}
+                  data-index={idx}
+                  className={`rounded-2xl overflow-hidden border border-gray-400 aspect-square flex flex-col bg-gradient-to-br from-white via-gray-50 to-gray-200 transition-all duration-700 ease-out ${
+                    isVisible
+                      ? "opacity-100 translate-y-0 scale-100"
+                      : "opacity-0 translate-y-10 scale-90"
+                  }`}
+                  style={{ transitionDelay: `${idx * 120}ms` }}
                 >
+                  {/* Image */}
                   <div className="flex-1 overflow-hidden">
                     <img
                       src={cat.image}
-                      alt={cat.name}
+                      alt={`Shop ${cat.name}`}
                       loading="lazy"
-                      className="w-full h-full object-cover"
+                      className="w-full h-full object-cover transition duration-500 ease-in-out transform hover:scale-110"
                     />
                   </div>
-                  <button className="p-2 bg-gray-300 font-semibold text-gray-800 text-center text-sm truncate hover:shadow-md transition">
+
+                  {/* Label */}
+                  <div className="p-3 bg-gradient-to-r from-purple-600 to-indigo-600 text-white font-semibold text-center text-sm truncate shadow-md">
                     {cat.name}
-                  </button>
+                  </div>
                 </Link>
               );
             })}

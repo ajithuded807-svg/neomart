@@ -1,42 +1,80 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 
 export default function Login() {
   const navigate = useNavigate();
-  const { login } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [strength, setStrength] = useState("");
+  const [error, setError] = useState("");
 
   const checkStrength = (pass) => {
     if (pass.length < 8) {
-      setStrength("Weak - at least 8 characters");
+      setStrength("Weak");
     } else if (!/[A-Z]/.test(pass)) {
-      setStrength("Medium - add an uppercase letter");
+      setStrength("Medium");
     } else {
-      setStrength("Strong ✅");
+      setStrength("Strong");
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (strength === "Strong ✅") {
-      login();
+    setError("");
+
+    try {
+      await login(email, password); // ✅ Pass credentials
       navigate("/products");
+    } catch (err) {
+      console.error("Login failed:", err.message);
+      setError("Invalid email or password");
     }
+  };
+
+  const handleGoogleLogin = async () => {
+    try {
+      await loginWithGoogle();
+      navigate("/products");
+    } catch (error) {
+      console.error("Google login failed:", error);
+      setError("Google login failed. Try again.");
+    }
+  };
+
+  const strengthColors = {
+    Weak: "bg-red-500 w-1/3",
+    Medium: "bg-yellow-500 w-2/3",
+    Strong: "bg-green-500 w-full",
   };
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-br from-purple-500 to-indigo-600 p-6">
-      <div className="bg-white p-8 rounded-2xl shadow-2xl w-full max-w-md">
-        <h1 className="text-3xl font-bold text-purple-600 mb-4">Login to NeoMart</h1>
+    <div className="min-h-screen flex items-center justify-center bg-gradient-to-r from-purple-600 via-pink-500 to-indigo-600 animate-gradient-x p-6">
+      <div className="relative bg-white/10 backdrop-blur-lg border border-white/20 shadow-2xl rounded-2xl w-full max-w-md p-8">
+        {/* Branding */}
+        <h1 className="text-4xl font-extrabold text-center mb-6">
+          <span className="text-blue-500">Neo</span>
+          <span className="text-green-500">Mart</span>
+        </h1>
+        <h2 className="text-xl font-bold text-white/90 mb-6 text-center">
+          Login to Continue
+        </h2>
+
+        {/* Error message */}
+        {error && (
+          <div className="bg-red-500 text-white text-center py-2 rounded mb-4">
+            {error}
+          </div>
+        )}
+
+        {/* Form */}
         <form onSubmit={handleSubmit}>
           <input
             type="email"
             placeholder="Email"
-            className="w-full p-3 mb-4 border border-gray-300 rounded-lg"
+            className="w-full p-3 mb-4 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:ring-2 focus:ring-blue-400 outline-none"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             required
@@ -45,7 +83,7 @@ export default function Login() {
           <input
             type="password"
             placeholder="Password"
-            className="w-full p-3 mb-2 border border-gray-300 rounded-lg"
+            className="w-full p-3 mb-2 rounded-lg bg-white/20 border border-white/30 text-white placeholder-white/70 focus:ring-2 focus:ring-blue-400 outline-none"
             value={password}
             onChange={(e) => {
               setPassword(e.target.value);
@@ -53,21 +91,47 @@ export default function Login() {
             }}
             required
           />
-          <p
-            className={`text-sm mb-4 ${
-              strength.includes("Strong") ? "text-green-600" : "text-red-500"
-            }`}
-          >
-            {strength}
-          </p>
+
+          {/* Password strength bar */}
+          {strength && (
+            <div className="w-full bg-gray-300 rounded-full h-2 mb-4">
+              <div
+                className={`h-2 rounded-full transition-all duration-500 ${strengthColors[strength]}`}
+              ></div>
+            </div>
+          )}
 
           <button
             type="submit"
-            className="w-full py-3 bg-purple-600 text-white rounded-lg font-bold hover:bg-purple-700 transition"
+            className="w-full py-3 mt-2 bg-gradient-to-r from-blue-500 to-green-500 text-white rounded-lg font-bold hover:scale-105 transition-transform"
           >
             Login
           </button>
         </form>
+
+        {/* Divider */}
+        <div className="flex items-center my-6">
+          <div className="flex-grow h-px bg-white/30"></div>
+          <span className="px-4 text-white/70 text-sm">OR</span>
+          <div className="flex-grow h-px bg-white/30"></div>
+        </div>
+
+        {/* Google Login */}
+        <button
+          onClick={handleGoogleLogin}
+          className="w-full flex items-center justify-center gap-3 py-3 bg-white text-gray-700 font-semibold rounded-lg hover:bg-gray-200 transition"
+        >
+          <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
+          Sign in with Google
+        </button>
+
+        {/* Footer */}
+        <p className="text-center text-white/80 mt-6">
+          Don’t have an account?{" "}
+          <Link to="/signup" className="text-blue-400 font-semibold hover:underline">
+            Sign up
+          </Link>
+        </p>
       </div>
     </div>
   );
